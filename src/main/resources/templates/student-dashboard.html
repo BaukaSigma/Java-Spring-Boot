@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель студента - Learning Progress Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/modern-style.css">
+    <script src="/js/i18n.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-custom navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/"><i class="bi bi-mortarboard-fill"></i> <span data-i18n="app.name">Learning Progress Tracker</span></a>
+            <div class="d-flex align-items-center">
+                <!-- Переключатель языков -->
+                <button class="lang-btn" data-lang="en" onclick="i18n.changeLanguage('en')">EN</button>
+                <button class="lang-btn active" data-lang="ru" onclick="i18n.changeLanguage('ru')">RU</button>
+                <button class="lang-btn" data-lang="kk" onclick="i18n.changeLanguage('kk')">KK</button>
+                <span class="navbar-text ms-3 me-3"><i class="bi bi-person-circle"></i> <span id="userName"></span></span>
+                <button class="btn btn-outline-light btn-sm" onclick="logout()"><i class="bi bi-box-arrow-right"></i> <span data-i18n="app.logout">Выход</span></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="welcome-card">
+            <h1><i class="bi bi-book"></i> <span data-i18n="student.title">Панель студента</span></h1>
+            <p class="mb-0" data-i18n="student.subtitle">Добро пожаловать! Здесь вы можете отслеживать свой прогресс</p>
+        </div>
+
+        <!-- Статистика -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-journal-bookmark stat-icon"></i>
+                    <h3 id="coursesCount">0</h3>
+                    <p class="text-muted mb-0" data-i18n="student.coursesEnrolled">Моих курсов</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-clipboard-check stat-icon"></i>
+                    <h3 id="assignmentsCount">0</h3>
+                    <p class="text-muted mb-0" data-i18n="instructor.assignments">Заданий</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-graph-up stat-icon"></i>
+                    <h3 id="avgGrade">-</h3>
+                    <p class="text-muted mb-0" data-i18n="student.avgGrade">Средний балл</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-calendar-check stat-icon"></i>
+                    <h3 id="attendance">-</h3>
+                    <p class="text-muted mb-0" data-i18n="student.attendance">Посещаемость</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Мои курсы -->
+        <div class="row mt-4">
+            <div class="col-md-8">
+                <div class="card p-4">
+                    <h4><i class="bi bi-book-half"></i> <span data-i18n="student.myCourses">Мои курсы</span></h4>
+                    <div id="coursesList">
+                        <p class="text-muted">Загрузка курсов...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-4">
+                    <h4><i class="bi bi-alarm"></i> <span data-i18n="student.upcomingDeadlines">Предстоящие дедлайны</span></h4>
+                    <div id="deadlinesList">
+                        <p class="text-muted">Нет дедлайнов</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Последние оценки -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card p-4">
+                    <h4><i class="bi bi-trophy"></i> <span data-i18n="student.recentGrades">Последние оценки</span></h4>
+                    <div id="gradesList">
+                        <p class="text-muted">Оценок пока нет</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Посещаемость -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card p-4">
+                    <h4><i class="bi bi-calendar-week"></i> <span data-i18n="student.myAttendance">Моя посещаемость</span></h4>
+                    <div id="attendanceList">
+                        <p class="text-muted">Данные о посещаемости загружаются...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Предстоящие дедлайны -->
+            <div class="col-md-6">
+                <div class="card p-4">
+                    <h4><i class="bi bi-clock-history"></i> Предстоящие дедлайны</h4>
+                    <div id="deadlinesList">
+                        <p class="text-muted">Загрузка дедлайнов...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        if (!token || user.role !== 'STUDENT') {
+            window.location.href = '/login';
+        } else {
+            document.getElementById('userName').textContent = user.username || 'Студент';
+            loadStudentData();
+        }
+
+        async function loadStudentData() {
+            try {
+                // Загрузка курсов студента
+                const enrollmentsRes = await fetch(`/api/enrollments/student/${user.id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (enrollmentsRes.ok) {
+                    const enrollments = await enrollmentsRes.json();
+                    document.getElementById('coursesCount').textContent = enrollments.length;
+                    displayCourses(enrollments);
+                }
+
+                // Загрузка оценок
+                const gradesRes = await fetch(`/api/grades/student/${user.id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (gradesRes.ok) {
+                    const grades = await gradesRes.json();
+                    displayGrades(grades);
+                    calculateAverage(grades);
+                }
+
+                // Загрузка посещаемости
+                const attendanceRes = await fetch(`/api/attendance/student/${user.id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (attendanceRes.ok) {
+                    const attendance = await attendanceRes.json();
+                    displayAttendance(attendance);
+                    calculateAttendancePercentage(attendance);
+                }
+                
+                // Загрузка дедлайнов
+                loadDeadlines();
+            } catch (error) {
+                console.error('Ошибка загрузки данных:', error);
+            }
+        }
+        
+        async function loadDeadlines() {
+            try {
+                // Получаем все курсы студента
+                const enrollmentsRes = await fetch(`/api/enrollments/student/${user.id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (!enrollmentsRes.ok) return;
+                
+                const enrollments = await enrollmentsRes.json();
+                const allAssignments = [];
+                
+                // Для каждого курса получаем задания
+                for (const enrollment of enrollments) {
+                    if (enrollment.course && enrollment.course.id) {
+                        const assignmentsRes = await fetch(`/api/assignments/course/${enrollment.course.id}`, {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        
+                        if (assignmentsRes.ok) {
+                            const assignments = await assignmentsRes.json();
+                            // Добавляем информацию о курсе
+                            assignments.forEach(a => {
+                                a.courseName = enrollment.course.titleRu || enrollment.course.titleEn;
+                                a.courseCode = enrollment.course.courseCode;
+                            });
+                            allAssignments.push(...assignments);
+                        }
+                    }
+                }
+                
+                // Фильтруем только предстоящие дедлайны
+                const now = new Date();
+                const upcomingDeadlines = allAssignments
+                    .filter(a => a.dueDate && new Date(a.dueDate) > now)
+                    .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+                    .slice(0, 5);
+                
+                displayDeadlines(upcomingDeadlines);
+            } catch (error) {
+                console.error('Ошибка загрузки дедлайнов:', error);
+                document.getElementById('deadlinesList').innerHTML = '<p class="text-muted">Ошибка загрузки</p>';
+            }
+        }
+        
+        function displayDeadlines(deadlines) {
+            const container = document.getElementById('deadlinesList');
+            if (deadlines.length === 0) {
+                container.innerHTML = '<p class="text-muted">Нет предстоящих дедлайнов</p>';
+                return;
+            }
+            
+            container.innerHTML = deadlines.map(d => {
+                const dueDate = new Date(d.dueDate);
+                const daysLeft = Math.ceil((dueDate - new Date()) / (1000 * 60 * 60 * 24));
+                const urgencyClass = daysLeft <= 2 ? 'text-danger' : daysLeft <= 7 ? 'text-warning' : 'text-success';
+                
+                return `
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 border-bottom">
+                        <div>
+                            <strong>${d.titleRu || d.titleEn}</strong>
+                            <small class="text-muted d-block">${d.courseCode} - ${d.courseName}</small>
+                        </div>
+                        <div class="text-end">
+                            <div class="${urgencyClass}">
+                                <i class="bi bi-clock"></i> ${daysLeft} дн.
+                            </div>
+                            <small class="text-muted">${dueDate.toLocaleDateString('ru-RU')}</small>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function displayCourses(enrollments) {
+            const container = document.getElementById('coursesList');
+            if (enrollments.length === 0) {
+                container.innerHTML = '<p class="text-muted">Вы пока не записаны ни на один курс</p>';
+                return;
+            }
+            container.innerHTML = enrollments.map(e => `
+                <div class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
+                    <div>
+                        <strong>${e.course?.courseCode || 'N/A'}</strong>
+                        <small class="text-muted d-block">${e.course?.titleRu || e.course?.titleEn || 'Курс'}</small>
+                    </div>
+                    <span class="badge badge-custom">${e.status}</span>
+                </div>
+            `).join('');
+        }
+
+        function displayGrades(grades) {
+            const container = document.getElementById('gradesList');
+            if (grades.length === 0) {
+                container.innerHTML = '<p class="text-muted">Оценок пока нет</p>';
+                return;
+            }
+            container.innerHTML = '<table class="table"><thead><tr><th>Задание</th><th>Оценка</th><th>Дата</th></tr></thead><tbody>' +
+                grades.slice(0, 5).map(g => `
+                    <tr>
+                        <td>${g.assignment?.titleRu || 'Задание'}</td>
+                        <td><strong>${g.score || '-'}</strong> / ${g.assignment?.maxScore || '100'}</td>
+                        <td>${g.gradedAt ? new Date(g.gradedAt).toLocaleDateString('ru-RU') : '-'}</td>
+                    </tr>
+                `).join('') + '</tbody></table>';
+        }
+
+        function displayAttendance(attendance) {
+            const container = document.getElementById('attendanceList');
+            if (attendance.length === 0) {
+                container.innerHTML = '<p class="text-muted">Данных о посещаемости нет</p>';
+                return;
+            }
+            container.innerHTML = attendance.slice(0, 10).map(a => `
+                <div class="d-flex justify-content-between mb-2">
+                    <span>${new Date(a.attendanceDate).toLocaleDateString('ru-RU')}</span>
+                    <span class="badge ${a.status === 'PRESENT' ? 'bg-success' : a.status === 'LATE' ? 'bg-warning' : 'bg-danger'}">${a.status}</span>
+                </div>
+            `).join('');
+        }
+
+        function calculateAverage(grades) {
+            if (grades.length === 0) return;
+            const avg = grades.reduce((sum, g) => sum + (parseFloat(g.score) || 0), 0) / grades.length;
+            document.getElementById('avgGrade').textContent = avg.toFixed(1);
+        }
+
+        function calculateAttendancePercentage(attendance) {
+            if (attendance.length === 0) return;
+            const present = attendance.filter(a => a.status === 'PRESENT').length;
+            const percentage = (present / attendance.length * 100).toFixed(0);
+            document.getElementById('attendance').textContent = percentage + '%';
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/login';
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/animations.js"></script>
+</body>
+</html>

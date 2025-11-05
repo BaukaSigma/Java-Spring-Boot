@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора - Learning Progress Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/modern-style.css">
+    <script src="/js/i18n.js"></script>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 90%, #2BFF88 100%);
+            --admin-gradient: linear-gradient(135deg, #FA8BFF 0%, #2BD2FF 90%, #2BFF88 100%);
+        }
+        body::before {
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(250, 139, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(43, 210, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(43, 255, 136, 0.2) 0%, transparent 50%);
+        }
+        .stat-icon {
+            background: var(--admin-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .btn-admin {
+            background: var(--admin-gradient);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: var(--transition-fast);
+            box-shadow: 0 4px 15px rgba(250, 139, 255, 0.4);
+        }
+        .btn-admin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(250, 139, 255, 0.6);
+            color: white;
+        }
+        .table-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+        }
+        .lang-btn:hover { background: white; color: #FA8BFF; }
+        .lang-btn.active { background: white; color: #FA8BFF; }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-custom navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/"><i class="bi bi-shield-check"></i> <span data-i18n="app.name">Learning Progress Tracker</span> - ADMIN</a>
+            <div class="d-flex align-items-center">
+                <button class="lang-btn" data-lang="en" onclick="i18n.changeLanguage('en')">EN</button>
+                <button class="lang-btn active" data-lang="ru" onclick="i18n.changeLanguage('ru')">RU</button>
+                <button class="lang-btn" data-lang="kk" onclick="i18n.changeLanguage('kk')">KK</button>
+                <span class="navbar-text ms-3 me-3"><i class="bi bi-person-circle"></i> <span id="userName"></span></span>
+                <button class="btn btn-outline-light btn-sm" onclick="logout()"><i class="bi bi-box-arrow-right"></i> <span data-i18n="app.logout">Выход</span></button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="welcome-card">
+            <h1><i class="bi bi-speedometer2"></i> <span data-i18n="admin.title">Панель администратора</span></h1>
+            <p class="mb-0" data-i18n="admin.subtitle">Полный контроль над системой управления обучением</p>
+        </div>
+
+        <!-- Статистика системы -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-people stat-icon"></i>
+                    <h3 id="totalUsers">0</h3>
+                    <p class="text-muted mb-0" data-i18n="admin.totalUsers">Пользователей</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-journal-text stat-icon"></i>
+                    <h3 id="totalCourses">0</h3>
+                    <p class="text-muted mb-0" data-i18n="admin.totalCourses">Курсов</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-person-workspace stat-icon"></i>
+                    <h3 id="totalInstructors">0</h3>
+                    <p class="text-muted mb-0">Преподавателей</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card">
+                    <i class="bi bi-person-badge stat-icon"></i>
+                    <h3 id="totalStudents">0</h3>
+                    <p class="text-muted mb-0">Студентов</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Управление пользователями -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="table-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4><i class="bi bi-people-fill"></i> Все пользователи</h4>
+                        <div>
+                            <button class="btn btn-admin btn-sm me-2" onclick="loadUsers()">
+                                <i class="bi bi-arrow-clockwise"></i> Обновить
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Имя</th>
+                                    <th>Роль</th>
+                                    <th>Дата регистрации</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr><td colspan="7" class="text-center">Загрузка...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Управление курсами -->
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="table-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4><i class="bi bi-book-half"></i> Все курсы</h4>
+                        <button class="btn btn-admin btn-sm" onclick="loadCourses()">
+                            <i class="bi bi-arrow-clockwise"></i> Обновить
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Код</th>
+                                    <th>Название</th>
+                                    <th>Кредиты</th>
+                                    <th>Преподаватель</th>
+                                    <th>Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="coursesTableBody">
+                                <tr><td colspan="6" class="text-center">Загрузка...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Статистика активности -->
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="card p-4">
+                    <h4><i class="bi bi-graph-up-arrow"></i> Статистика оценок</h4>
+                    <div id="gradesStats">
+                        <p class="text-muted">Загрузка статистики...</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card p-4">
+                    <h4><i class="bi bi-calendar-check"></i> Статистика посещаемости</h4>
+                    <div id="attendanceStats">
+                        <p class="text-muted">Загрузка статистики...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        if (!token || user.role !== 'ADMIN') {
+            window.location.href = '/login';
+        } else {
+            document.getElementById('userName').textContent = user.username || 'Администратор';
+            loadAdminData();
+        }
+
+        async function loadAdminData() {
+            loadUsers();
+            loadCourses();
+        }
+
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/users', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (res.ok) {
+                    const users = await res.json();
+                    document.getElementById('totalUsers').textContent = users.length;
+                    
+                    const students = users.filter(u => u.role === 'STUDENT').length;
+                    const instructors = users.filter(u => u.role === 'INSTRUCTOR').length;
+                    
+                    document.getElementById('totalStudents').textContent = students;
+                    document.getElementById('totalInstructors').textContent = instructors;
+                    
+                    displayUsers(users);
+                } else {
+                    document.getElementById('usersTableBody').innerHTML = 
+                        '<tr><td colspan="7" class="text-center text-danger">Ошибка загрузки пользователей</td></tr>';
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки пользователей:', error);
+                document.getElementById('usersTableBody').innerHTML = 
+                    '<tr><td colspan="7" class="text-center text-danger">Ошибка подключения</td></tr>';
+            }
+        }
+
+        async function loadCourses() {
+            try {
+                const res = await fetch('/api/courses', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (res.ok) {
+                    const courses = await res.json();
+                    document.getElementById('totalCourses').textContent = courses.length;
+                    displayCourses(courses);
+                } else {
+                    document.getElementById('coursesTableBody').innerHTML = 
+                        '<tr><td colspan="6" class="text-center text-danger">Ошибка загрузки курсов</td></tr>';
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки курсов:', error);
+                document.getElementById('coursesTableBody').innerHTML = 
+                    '<tr><td colspan="6" class="text-center text-danger">Ошибка подключения</td></tr>';
+            }
+        }
+
+        function displayUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">Нет пользователей</td></tr>';
+                return;
+            }
+            tbody.innerHTML = users.map(u => `
+                <tr>
+                    <td>${u.id}</td>
+                    <td><strong>${u.username}</strong></td>
+                    <td>${u.email}</td>
+                    <td>${u.firstName || '-'} ${u.lastName || ''}</td>
+                    <td><span class="badge ${
+                        u.role === 'ADMIN' ? 'bg-danger' : 
+                        u.role === 'INSTRUCTOR' ? 'bg-warning' : 'bg-primary'
+                    }">${u.role}</span></td>
+                    <td>${u.createdAt ? new Date(u.createdAt).toLocaleDateString('ru-RU') : '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteUser(${u.id})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function displayCourses(courses) {
+            const tbody = document.getElementById('coursesTableBody');
+            if (courses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">Нет курсов</td></tr>';
+                return;
+            }
+            tbody.innerHTML = courses.map(c => `
+                <tr>
+                    <td>${c.id}</td>
+                    <td><strong>${c.courseCode}</strong></td>
+                    <td>${c.titleRu || c.titleEn}</td>
+                    <td>${c.credits}</td>
+                    <td>${c.instructor?.username || '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteCourse(${c.id})">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('Вы уверены, что хотите удалить этого пользователя?')) return;
+            try {
+                const res = await fetch(`/api/users/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    alert('Пользователь удален');
+                    loadUsers();
+                } else {
+                    alert('Ошибка удаления');
+                }
+            } catch (error) {
+                alert('Ошибка подключения');
+            }
+        }
+
+        async function deleteCourse(id) {
+            if (!confirm('Вы уверены, что хотите удалить этот курс?')) return;
+            try {
+                const res = await fetch(`/api/courses/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    alert('Курс удален');
+                    loadCourses();
+                } else {
+                    alert('Ошибка удаления');
+                }
+            } catch (error) {
+                alert('Ошибка подключения');
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = '/login';
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

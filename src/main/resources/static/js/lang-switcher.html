@@ -1,0 +1,26 @@
+<!-- Универсальный переключатель языков для навбара -->
+<style>
+    .lang-btn {
+        background: rgba(255,255,255,0.2);
+        border: 2px solid white;
+        color: white;
+        padding: 3px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+        margin-left: 5px;
+    }
+    .lang-btn:hover {
+        background: white;
+        color: #667eea;
+    }
+    .lang-btn.active {
+        background: white;
+        color: #667eea;
+    }
+</style>
+
+<button class="lang-btn" data-lang="en" onclick="i18n.changeLanguage('en')">EN</button>
+<button class="lang-btn active" data-lang="ru" onclick="i18n.changeLanguage('ru')">RU</button>
+<button class="lang-btn" data-lang="kk" onclick="i18n.changeLanguage('kk')">KK</button>
