@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,12 +13,14 @@
         :root {
             --primary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         }
+
         .stat-icon {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+
         .btn-instructor {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
@@ -28,32 +31,46 @@
             transition: var(--transition-fast);
             box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
         }
+
         .btn-instructor:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(245, 87, 108, 0.6);
             color: white;
         }
-        .lang-btn:hover { background: white; color: #f5576c; }
-        .lang-btn.active { background: white; color: #f5576c; }
+
+        .lang-btn:hover {
+            background: white;
+            color: #f5576c;
+        }
+
+        .lang-btn.active {
+            background: white;
+            color: #f5576c;
+        }
     </style>
 </head>
+
 <body>
     <nav class="navbar navbar-custom navbar-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/"><i class="bi bi-mortarboard-fill"></i> <span data-i18n="app.name">Learning Progress Tracker</span></a>
+            <a class="navbar-brand" href="/"><i class="bi bi-mortarboard-fill"></i> <span data-i18n="app.name">Learning
+                    Progress Tracker</span></a>
             <div class="d-flex align-items-center">
                 <button class="lang-btn" data-lang="en" onclick="i18n.changeLanguage('en')">EN</button>
                 <button class="lang-btn active" data-lang="ru" onclick="i18n.changeLanguage('ru')">RU</button>
                 <button class="lang-btn" data-lang="kk" onclick="i18n.changeLanguage('kk')">KK</button>
-                <span class="navbar-text ms-3 me-3"><i class="bi bi-person-circle"></i> <span id="userName"></span></span>
-                <button class="btn btn-outline-light btn-sm" onclick="logout()"><i class="bi bi-box-arrow-right"></i> <span data-i18n="app.logout">Выход</span></button>
+                <span class="navbar-text ms-3 me-3"><i class="bi bi-person-circle"></i> <span
+                        id="userName"></span></span>
+                <button class="btn btn-outline-light btn-sm" onclick="logout()"><i class="bi bi-box-arrow-right"></i>
+                    <span data-i18n="app.logout">Выход</span></button>
             </div>
         </div>
     </nav>
 
     <div class="container mt-4">
         <div class="welcome-card">
-            <h1><i class="bi bi-person-workspace"></i> <span data-i18n="instructor.title">Панель преподавателя</span></h1>
+            <h1><i class="bi bi-person-workspace"></i> <span data-i18n="instructor.title">Панель преподавателя</span>
+            </h1>
             <p class="mb-0" data-i18n="instructor.subtitle">Управляйте курсами, заданиями и оценками студентов</p>
         </div>
 
@@ -95,7 +112,8 @@
                 <div class="card p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h4><i class="bi bi-book-half"></i> Мои курсы</h4>
-                        <button class="btn btn-instructor btn-sm" data-bs-toggle="modal" data-bs-target="#createCourseModal">
+                        <button class="btn btn-instructor btn-sm" data-bs-toggle="modal"
+                            data-bs-target="#createCourseModal">
                             <i class="bi bi-plus-circle"></i> Создать курс
                         </button>
                     </div>
@@ -122,7 +140,9 @@
                                 </tr>
                             </thead>
                             <tbody id="allStudentsList">
-                                <tr><td colspan="4" class="text-center">Загрузка...</td></tr>
+                                <tr>
+                                    <td colspan="4" class="text-center">Загрузка...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -142,36 +162,16 @@
                 <div class="modal-body">
                     <form id="createCourseForm">
                         <div class="mb-3">
-                            <label class="form-label">Код курса</label>
-                            <input type="text" class="form-control" id="courseCode" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Название (EN)</label>
-                            <input type="text" class="form-control" id="titleEn" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Название (RU)</label>
-                            <input type="text" class="form-control" id="titleRu">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Название (KK)</label>
-                            <input type="text" class="form-control" id="titleKk">
+                            <label class="form-label">Название</label>
+                            <input type="text" class="form-control" id="title" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Кредиты</label>
                             <input type="number" class="form-control" id="credits" required min="1" max="10">
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Описание (EN)</label>
-                            <textarea class="form-control" id="descriptionEn" rows="2"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Описание (RU)</label>
-                            <textarea class="form-control" id="descriptionRu" rows="2"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Описание (KK)</label>
-                            <textarea class="form-control" id="descriptionKk" rows="2"></textarea>
+                            <label class="form-label">Описание</label>
+                            <textarea class="form-control" id="description" rows="2"></textarea>
                         </div>
                         <button type="submit" class="btn btn-instructor w-100">Создать</button>
                     </form>
@@ -216,32 +216,17 @@
                     <input type="hidden" id="assignmentCourseId">
                     <form id="createAssignmentForm">
                         <div class="mb-3">
-                            <label class="form-label">Название (EN)</label>
-                            <input type="text" class="form-control" id="assignmentTitleEn" required>
+                            <label class="form-label">Название</label>
+                            <input type="text" class="form-control" id="assignmentTitle" required>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Название (RU)</label>
-                            <input type="text" class="form-control" id="assignmentTitleRu">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Название (KK)</label>
-                            <input type="text" class="form-control" id="assignmentTitleKk">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Описание (EN)</label>
-                            <textarea class="form-control" id="assignmentDescEn" rows="2"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Описание (RU)</label>
-                            <textarea class="form-control" id="assignmentDescRu" rows="2"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Описание (KK)</label>
-                            <textarea class="form-control" id="assignmentDescKk" rows="2"></textarea>
+                            <label class="form-label">Описание</label>
+                            <textarea class="form-control" id="assignmentDesc" rows="2"></textarea>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Максимальный балл</label>
-                            <input type="number" class="form-control" id="assignmentMaxScore" required min="1" max="100" value="100">
+                            <input type="number" class="form-control" id="assignmentMaxScore" required min="1" max="100"
+                                value="100">
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Дедлайн</label>
@@ -308,12 +293,13 @@
                 const coursesRes = await fetch(`/api/courses/instructor/${user.id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                
+
                 if (coursesRes.ok) {
                     const courses = await coursesRes.json();
                     document.getElementById('coursesCount').textContent = courses.length;
                     displayCourses(courses);
                     loadCoursesStudents(courses);
+                    loadCoursesAssignments(courses);
                 }
             } catch (error) {
                 console.error('Ошибка загрузки данных:', error);
@@ -331,9 +317,25 @@
                         const enrollments = await res.json();
                         totalStudents += enrollments.length;
                     }
-                } catch (e) {}
+                } catch (e) { }
             }
             document.getElementById('studentsCount').textContent = totalStudents;
+        }
+
+        async function loadCoursesAssignments(courses) {
+            let totalAssignments = 0;
+            for (const course of courses) {
+                try {
+                    const res = await fetch(`/api/assignments/course/${course.id}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                    if (res.ok) {
+                        const assignments = await res.json();
+                        totalAssignments += assignments.length;
+                    }
+                } catch (e) { }
+            }
+            document.getElementById('assignmentsCount').textContent = totalAssignments;
         }
 
         // Загрузка всех студентов
@@ -380,29 +382,69 @@
                 container.innerHTML = '<p class="text-muted">У вас пока нет курсов. Создайте первый курс!</p>';
                 return;
             }
-            container.innerHTML = courses.map(c => `
-                <div class="d-flex justify-content-between align-items-center mb-3 p-3 border rounded">
-                    <div>
-                        <h5 class="mb-1">${c.courseCode}</h5>
-                        <small class="text-muted">${c.titleRu || c.titleEn}</small>
-                        <div class="mt-1">
-                            <span class="badge bg-secondary">${c.credits} кредитов</span>
+            container.innerHTML = `<div class="accordion" id="coursesAccordion">` + courses.map((c, index) => `
+                <div class="accordion-item mb-3 border rounded">
+                    <h2 class="accordion-header" id="heading${c.id}">
+                        <button class="accordion-button collapsed p-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${c.id}" aria-expanded="false" aria-controls="collapse${c.id}" onclick="loadAssignmentsForCourse(${c.id})">
+                            <div class="d-flex justify-content-between align-items-center w-100 me-3">
+                                <div class="text-start">
+                                    <h5 class="mb-1">${c.title}</h5>
+                                    <small class="text-muted d-block text-truncate" style="max-width: 400px;">${c.description || 'Нет описания'}</small>
+                                </div>
+                                <div>
+                                    <span class="badge bg-secondary">${c.credits} кредитов</span>
+                                </div>
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="collapse${c.id}" class="accordion-collapse collapse" aria-labelledby="heading${c.id}" data-bs-parent="#coursesAccordion">
+                        <div class="accordion-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6>Задания курса</h6>
+                                <button class="btn btn-sm btn-primary" onclick="openCreateAssignmentModal(${c.id}, '${c.title.replace(/'/g, "\\'")}')">
+                                    <i class="bi bi-plus-circle"></i> Создать задание
+                                </button>
+                            </div>
+                            <div id="assignments-list-${c.id}" class="text-muted small">Загрузка заданий...</div>
                         </div>
                     </div>
-                    <div>
-                        <button class="btn btn-sm btn-primary" onclick="openCreateAssignmentModal(${c.id}, '${c.courseCode}')">
-                            <i class="bi bi-plus-circle"></i> Создать задание
-                        </button>
-                    </div>
                 </div>
-            `).join('');
+            `).join('') + `</div>`;
+        }
+
+        async function loadAssignmentsForCourse(courseId) {
+            const listContainer = document.getElementById(`assignments-list-${courseId}`);
+            if (listContainer.dataset.loaded === 'true') return; // предотвращаем повторную загрузку
+            try {
+                const res = await fetch(`/api/assignments/course/${courseId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const assignments = await res.json();
+                    if (assignments.length === 0) {
+                        listContainer.innerHTML = 'Заданий пока нет.';
+                    } else {
+                        listContainer.innerHTML = '<ul class="list-group">' +
+                            assignments.map(a => `<li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>${a.title}</strong><br>
+                                    <small class="text-muted">${a.description || ''}</small>
+                                </div>
+                                <span class="badge bg-info rounded-pill">${a.maxScore} баллов</span>
+                            </li>`).join('') + '</ul>';
+                    }
+                    listContainer.dataset.loaded = 'true';
+                }
+            } catch (e) {
+                listContainer.innerHTML = 'Ошибка загрузки заданий.';
+            }
         }
 
         // Открыть модальное окно назначения курса
         async function openAssignCourseModal(studentId, studentName) {
             document.getElementById('assignStudentId').value = studentId;
             document.getElementById('assignStudentName').textContent = studentName;
-            
+
             // Загрузить курсы преподавателя
             try {
                 const res = await fetch(`/api/courses/instructor/${user.id}`, {
@@ -411,12 +453,12 @@
                 if (res.ok) {
                     const courses = await res.json();
                     const select = document.getElementById('assignCourseSelect');
-                    select.innerHTML = courses.map(c => 
-                        `<option value="${c.id}">${c.courseCode} - ${c.titleRu || c.titleEn}</option>`
+                    select.innerHTML = courses.map(c =>
+                        `<option value="${c.id}">${c.title}</option>`
                     ).join('');
                 }
-            } catch (e) {}
-            
+            } catch (e) { }
+
             new bootstrap.Modal(document.getElementById('assignCourseModal')).show();
         }
 
@@ -424,18 +466,18 @@
         async function assignCourse() {
             const studentId = document.getElementById('assignStudentId').value;
             const courseId = document.getElementById('assignCourseSelect').value;
-            
+
             if (!courseId) {
                 alert('Выберите курс');
                 return;
             }
-            
+
             try {
                 const res = await fetch(`/api/enrollments?studentId=${studentId}&courseId=${courseId}`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-                
+
                 if (res.ok) {
                     alert('Курс успешно назначен студенту!');
                     bootstrap.Modal.getInstance(document.getElementById('assignCourseModal')).hide();
@@ -453,7 +495,7 @@
         async function openGradeModal(studentId, studentName) {
             document.getElementById('gradeStudentId').value = studentId;
             document.getElementById('gradeStudentName').textContent = studentName;
-            
+
             // Загрузить enrollments студента
             try {
                 const res = await fetch(`/api/enrollments/student/${studentId}`, {
@@ -465,13 +507,13 @@
                     if (enrollments.length === 0) {
                         select.innerHTML = '<option value="">Студент не записан ни на один курс</option>';
                     } else {
-                        select.innerHTML = enrollments.map(e => 
-                            `<option value="${e.id}" data-course-id="${e.course.id}">${e.course.courseCode} - ${e.course.titleRu || e.course.titleEn}</option>`
+                        select.innerHTML = enrollments.map(e =>
+                            `<option value="${e.id}" data-course-id="${e.course.id}">${e.course.title}</option>`
                         ).join('');
                     }
                 }
-            } catch (e) {}
-            
+            } catch (e) { }
+
             new bootstrap.Modal(document.getElementById('gradeModal')).show();
         }
 
@@ -480,9 +522,9 @@
             const select = document.getElementById('gradeEnrollmentSelect');
             const selectedOption = select.options[select.selectedIndex];
             const courseId = selectedOption?.getAttribute('data-course-id');
-            
+
             if (!courseId) return;
-            
+
             try {
                 const res = await fetch(`/api/assignments/course/${courseId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
@@ -493,8 +535,8 @@
                     if (assignments.length === 0) {
                         assignSelect.innerHTML = '<option value="">Нет заданий для этого курса</option>';
                     } else {
-                        assignSelect.innerHTML = assignments.map(a => 
-                            `<option value="${a.id}">${a.titleRu || a.titleEn} (${a.maxScore} баллов)</option>`
+                        assignSelect.innerHTML = assignments.map(a =>
+                            `<option value="${a.id}">${a.title} (${a.maxScore} баллов)</option>`
                         ).join('');
                     }
                 }
@@ -509,12 +551,12 @@
             const assignmentId = document.getElementById('gradeAssignmentSelect').value;
             const score = document.getElementById('gradeScore').value;
             const feedback = document.getElementById('gradeFeedback').value;
-            
+
             if (!enrollmentId || !assignmentId || !score) {
                 alert('Заполните все обязательные поля');
                 return;
             }
-            
+
             const data = {
                 enrollmentId: parseInt(enrollmentId),
                 assignmentId: parseInt(assignmentId),
@@ -523,7 +565,7 @@
                 feedbackEn: feedback,
                 feedbackKk: feedback
             };
-            
+
             try {
                 const res = await fetch('/api/grades', {
                     method: 'POST',
@@ -533,7 +575,7 @@
                     },
                     body: JSON.stringify(data)
                 });
-                
+
                 if (res.ok) {
                     alert('Оценка успешно выставлена!');
                     bootstrap.Modal.getInstance(document.getElementById('gradeModal')).hide();
@@ -552,13 +594,8 @@
         document.getElementById('createCourseForm')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const data = {
-                courseCode: document.getElementById('courseCode').value,
-                titleEn: document.getElementById('titleEn').value,
-                titleRu: document.getElementById('titleRu').value,
-                titleKk: document.getElementById('titleKk').value,
-                descriptionEn: document.getElementById('descriptionEn').value,
-                descriptionRu: document.getElementById('descriptionRu').value,
-                descriptionKk: document.getElementById('descriptionKk').value,
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
                 credits: parseInt(document.getElementById('credits').value),
                 instructorId: user.id
             };
@@ -598,15 +635,11 @@
             e.preventDefault();
             const courseId = document.getElementById('assignmentCourseId').value;
             const deadline = document.getElementById('assignmentDeadline').value;
-            
+
             const data = {
                 courseId: parseInt(courseId),
-                titleEn: document.getElementById('assignmentTitleEn').value,
-                titleRu: document.getElementById('assignmentTitleRu').value,
-                titleKk: document.getElementById('assignmentTitleKk').value,
-                descriptionEn: document.getElementById('assignmentDescEn').value,
-                descriptionRu: document.getElementById('assignmentDescRu').value,
-                descriptionKk: document.getElementById('assignmentDescKk').value,
+                title: document.getElementById('assignmentTitle').value,
+                description: document.getElementById('assignmentDesc').value,
                 maxScore: parseFloat(document.getElementById('assignmentMaxScore').value),
                 deadline: deadline ? new Date(deadline).toISOString() : null
             };
@@ -625,6 +658,7 @@
                     alert('Задание успешно создано!');
                     bootstrap.Modal.getInstance(document.getElementById('createAssignmentModal')).hide();
                     document.getElementById('createAssignmentForm').reset();
+                    location.reload(); // Перезагружаем страницу чтобы обновить счетчик заданий и список курса
                 } else {
                     const error = await res.text();
                     alert('Ошибка создания задания: ' + error);
@@ -641,4 +675,5 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

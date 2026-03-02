@@ -31,19 +31,9 @@ public class CourseService {
      */
     @Transactional
     public Course createCourse(CourseRequest request) {
-        // Проверка на существование курса с таким кодом
-        if (courseRepository.existsByCourseCode(request.getCourseCode())) {
-            throw new RuntimeException("Course with code " + request.getCourseCode() + " already exists");
-        }
-
         Course course = new Course();
-        course.setCourseCode(request.getCourseCode());
-        course.setTitleEn(request.getTitleEn());
-        course.setTitleRu(request.getTitleRu());
-        course.setTitleKk(request.getTitleKk());
-        course.setDescriptionEn(request.getDescriptionEn());
-        course.setDescriptionRu(request.getDescriptionRu());
-        course.setDescriptionKk(request.getDescriptionKk());
+        course.setTitle(request.getTitle());
+        course.setDescription(request.getDescription());
         course.setCredits(request.getCredits());
 
         // Назначение преподавателя
@@ -67,14 +57,6 @@ public class CourseService {
     }
 
     /**
-     * Получить курс по коду
-     */
-    public Course getCourseByCourseCode(String courseCode) {
-        return courseRepository.findByCourseCode(courseCode)
-                .orElseThrow(() -> new RuntimeException("Course not found with code: " + courseCode));
-    }
-
-    /**
      * Получить все курсы
      */
     public List<Course> getAllCourses() {
@@ -95,20 +77,8 @@ public class CourseService {
     public Course updateCourse(Long id, CourseRequest request) {
         Course course = getCourseById(id);
 
-        // Проверка кода курса на уникальность при изменении
-        if (!course.getCourseCode().equals(request.getCourseCode())) {
-            if (courseRepository.existsByCourseCode(request.getCourseCode())) {
-                throw new RuntimeException("Course code already exists");
-            }
-            course.setCourseCode(request.getCourseCode());
-        }
-
-        course.setTitleEn(request.getTitleEn());
-        course.setTitleRu(request.getTitleRu());
-        course.setTitleKk(request.getTitleKk());
-        course.setDescriptionEn(request.getDescriptionEn());
-        course.setDescriptionRu(request.getDescriptionRu());
-        course.setDescriptionKk(request.getDescriptionKk());
+        course.setTitle(request.getTitle());
+        course.setDescription(request.getDescription());
         course.setCredits(request.getCredits());
 
         if (request.getInstructorId() != null) {
@@ -172,8 +142,6 @@ public class CourseService {
      * Поиск курсов по названию
      */
     public List<Course> searchCourses(String query) {
-        return courseRepository.findByTitleEnContainingIgnoreCaseOrTitleRuContainingIgnoreCaseOrTitleKkContainingIgnoreCase(
-                query, query, query
-        );
+        return courseRepository.findByTitleContainingIgnoreCase(query);
     }
 }

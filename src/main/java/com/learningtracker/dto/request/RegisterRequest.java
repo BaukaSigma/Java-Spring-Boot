@@ -27,7 +27,4 @@ public class RegisterRequest {
     private String firstName;
 
     private String lastName;
-
-    @NotBlank(message = "Role is required")
-    private String role; // STUDENT, INSTRUCTOR, ADMIN
 }

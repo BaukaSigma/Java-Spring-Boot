@@ -48,20 +48,6 @@ public class CourseController {
     }
 
     /**
-     * GET /api/courses/code/{courseCode}
-     * Получить курс по коду
-     */
-    @GetMapping("/code/{courseCode}")
-    public ResponseEntity<?> getCourseByCourseCode(@PathVariable String courseCode) {
-        try {
-            Course course = courseService.getCourseByCourseCode(courseCode);
-            return ResponseEntity.ok(course);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    /**
      * GET /api/courses/instructor/{instructorId}
      * Получить курсы преподавателя
      */

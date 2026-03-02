@@ -42,8 +42,18 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
-        user.setRole(User.Role.valueOf(request.getRole().toUpperCase()));
+        user.setRole(User.Role.STUDENT); // По умолчанию все студенты
 
+        return userRepository.save(user);
+    }
+
+    /**
+     * Изменить роль пользователя (только для ADMIN)
+     */
+    @Transactional
+    public User changeUserRole(Long id, User.Role newRole) {
+        User user = getUserById(id);
+        user.setRole(newRole);
         return userRepository.save(user);
     }
 

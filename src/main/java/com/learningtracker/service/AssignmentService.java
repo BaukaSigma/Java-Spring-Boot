@@ -31,12 +31,8 @@ public class AssignmentService {
 
         Assignment assignment = new Assignment();
         assignment.setCourse(course);
-        assignment.setTitleEn(request.getTitleEn());
-        assignment.setTitleRu(request.getTitleRu());
-        assignment.setTitleKk(request.getTitleKk());
-        assignment.setDescriptionEn(request.getDescriptionEn());
-        assignment.setDescriptionRu(request.getDescriptionRu());
-        assignment.setDescriptionKk(request.getDescriptionKk());
+        assignment.setTitle(request.getTitle());
+        assignment.setDescription(request.getDescription());
         assignment.setMaxScore(request.getMaxScore());
         assignment.setDueDate(request.getDueDate());
 
@@ -79,12 +75,8 @@ public class AssignmentService {
     public Assignment updateAssignment(Long id, AssignmentRequest request) {
         Assignment assignment = getAssignmentById(id);
 
-        assignment.setTitleEn(request.getTitleEn());
-        assignment.setTitleRu(request.getTitleRu());
-        assignment.setTitleKk(request.getTitleKk());
-        assignment.setDescriptionEn(request.getDescriptionEn());
-        assignment.setDescriptionRu(request.getDescriptionRu());
-        assignment.setDescriptionKk(request.getDescriptionKk());
+        assignment.setTitle(request.getTitle());
+        assignment.setDescription(request.getDescription());
         assignment.setMaxScore(request.getMaxScore());
         assignment.setDueDate(request.getDueDate());
 

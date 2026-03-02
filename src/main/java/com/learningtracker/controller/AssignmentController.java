@@ -65,6 +65,7 @@ public class AssignmentController {
     public ResponseEntity<List<Assignment>> getUpcomingAssignments(@PathVariable Long courseId) {
         return ResponseEntity.ok(assignmentService.getUpcomingAssignments(courseId));
     }
+    
 
     /**
      * POST /api/assignments
@@ -85,7 +86,7 @@ public class AssignmentController {
 
     /**
      * PUT /api/assignments/{id}
-     * Обновить задание (только для преподавателей и админов)
+     * Обновить задание 
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('INSTRUCTOR', 'ADMIN')")
@@ -105,7 +106,7 @@ public class AssignmentController {
 
     /**
      * DELETE /api/assignments/{id}
-     * Удалить задание (только для преподавателей и админов)
+     * Удалить задание 
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('INSTRUCTOR', 'ADMIN')")

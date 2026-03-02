@@ -96,6 +96,27 @@ public class UserController {
     }
 
     /**
+     * PUT /api/users/{id}/role
+     * Изменить роль пользователя (только для ADMIN)
+     */
+    @PutMapping("/{id}/role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> changeUserRole(
+            @PathVariable Long id,
+            @RequestParam String role
+    ) {
+        try {
+            User.Role newRole = User.Role.valueOf(role.toUpperCase());
+            User updatedUser = userService.changeUserRole(id, newRole);
+            return ResponseEntity.ok(updatedUser);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Invalid role provided"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        }
+    }
+
+    /**
      * DELETE /api/users/{id}
      * Удалить пользователя (только для ADMIN)
      */

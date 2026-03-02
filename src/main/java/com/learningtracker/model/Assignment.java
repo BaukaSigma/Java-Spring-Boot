@@ -38,43 +38,17 @@ public class Assignment {
     private Course course;
 
     /**
-     * Название задания на английском
+     * Название задания
      */
     @Column(nullable = false)
-    @NotBlank(message = "English title is required")
-    private String titleEn;
+    @NotBlank(message = "Title is required")
+    private String title;
 
     /**
-     * Название задания на русском
-     */
-    @Column(nullable = false)
-    @NotBlank(message = "Russian title is required")
-    private String titleRu;
-
-    /**
-     * Название задания на казахском
-     */
-    @Column(nullable = false)
-    @NotBlank(message = "Kazakh title is required")
-    private String titleKk;
-
-    /**
-     * Описание задания на английском
+     * Описание задания
      */
     @Column(columnDefinition = "TEXT")
-    private String descriptionEn;
-
-    /**
-     * Описание задания на русском
-     */
-    @Column(columnDefinition = "TEXT")
-    private String descriptionRu;
-
-    /**
-     * Описание задания на казахском
-     */
-    @Column(columnDefinition = "TEXT")
-    private String descriptionKk;
+    private String description;
 
     /**
      * Максимальный балл за задание
@@ -103,28 +77,6 @@ public class Assignment {
     @JsonIgnore
     @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Grade> grades = new HashSet<>();
-
-    /**
-     * Получить название задания на указанном языке
-     */
-    public String getTitle(String language) {
-        return switch (language.toLowerCase()) {
-            case "ru" -> titleRu;
-            case "kk" -> titleKk;
-            default -> titleEn;
-        };
-    }
-
-    /**
-     * Получить описание задания на указанном языке
-     */
-    public String getDescription(String language) {
-        return switch (language.toLowerCase()) {
-            case "ru" -> descriptionRu;
-            case "kk" -> descriptionKk;
-            default -> descriptionEn;
-        };
-    }
 
     /**
      * Проверить, просрочено ли задание

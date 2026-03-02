@@ -15,16 +15,6 @@ import java.util.Optional;
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
     /**
-     * Найти курс по коду курса
-     */
-    Optional<Course> findByCourseCode(String courseCode);
-
-    /**
-     * Проверить существование курса с таким кодом
-     */
-    boolean existsByCourseCode(String courseCode);
-
-    /**
      * Найти все курсы конкретного преподавателя
      */
     List<Course> findByInstructor(User instructor);
@@ -35,9 +25,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> findByInstructorId(Long instructorId);
 
     /**
-     * Поиск курсов по названию (на любом языке)
+     * Поиск курсов по названию
      */
-    List<Course> findByTitleEnContainingIgnoreCaseOrTitleRuContainingIgnoreCaseOrTitleKkContainingIgnoreCase(
-        String titleEn, String titleRu, String titleKk
-    );
+    List<Course> findByTitleContainingIgnoreCase(String title);
 }

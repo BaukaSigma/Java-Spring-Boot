@@ -32,50 +32,17 @@ public class Course {
     private Long id;
 
     /**
-     * Уникальный код курса (например: CS101, MATH201)
-     */
-    @Column(unique = true, nullable = false, length = 50)
-    @NotBlank(message = "Course code is required")
-    private String courseCode;
-
-    /**
-     * Название курса на английском языке
+     * Название курса
      */
     @Column(nullable = false)
-    @NotBlank(message = "English title is required")
-    private String titleEn;
+    @NotBlank(message = "Title is required")
+    private String title;
 
     /**
-     * Название курса на русском языке
-     */
-    @Column(nullable = false)
-    @NotBlank(message = "Russian title is required")
-    private String titleRu;
-
-    /**
-     * Название курса на казахском языке
-     */
-    @Column(nullable = false)
-    @NotBlank(message = "Kazakh title is required")
-    private String titleKk;
-
-    /**
-     * Описание курса на английском языке
+     * Описание курса
      */
     @Column(columnDefinition = "TEXT")
-    private String descriptionEn;
-
-    /**
-     * Описание курса на русском языке
-     */
-    @Column(columnDefinition = "TEXT")
-    private String descriptionRu;
-
-    /**
-     * Описание курса на казахском языке
-     */
-    @Column(columnDefinition = "TEXT")
-    private String descriptionKk;
+    private String description;
 
     /**
      * Количество кредитов за курс
@@ -112,30 +79,4 @@ public class Course {
     @JsonIgnore
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<Assignment> assignments = new HashSet<>();
-
-    /**
-     * Получить название курса на указанном языке
-     * @param language код языка (en, ru, kk)
-     * @return название на соответствующем языке
-     */
-    public String getTitle(String language) {
-        return switch (language.toLowerCase()) {
-            case "ru" -> titleRu;
-            case "kk" -> titleKk;
-            default -> titleEn;
-        };
-    }
-
-    /**
-     * Получить описание курса на указанном языке
-     * @param language код языка (en, ru, kk)
-     * @return описание на соответствующем языке
-     */
-    public String getDescription(String language) {
-        return switch (language.toLowerCase()) {
-            case "ru" -> descriptionRu;
-            case "kk" -> descriptionKk;
-            default -> descriptionEn;
-        };
-    }
 }
